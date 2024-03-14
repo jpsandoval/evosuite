@@ -135,7 +135,8 @@ public abstract class AssertionGenerator {
             MaxStatementsStoppingCondition.statementsExecuted(num);
             result.setTrace(comparisonObserver.getTrace(), ComparisonTraceEntry.class);
             result.setTrace(primitiveObserver.getTrace(), PrimitiveTraceEntry.class);
-            result.setTrace(inspectorObserver.getTrace(), InspectorTraceEntry.class);
+            //updating
+            result.setTrace(recInspectorTraceObserver.getTrace(), InspectorTraceEntry.class);
             result.setTrace(fieldObserver.getTrace(), PrimitiveFieldTraceEntry.class);
             result.setTrace(nullObserver.getTrace(), NullTraceEntry.class);
             result.setTrace(sameObserver.getTrace(), SameTraceEntry.class);

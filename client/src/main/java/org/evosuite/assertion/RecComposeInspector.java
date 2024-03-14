@@ -6,6 +6,7 @@ import org.evosuite.setup.TestClusterUtils;
 import org.evosuite.utils.LoggingUtils;
 import org.objectweb.asm.Type;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -33,6 +34,7 @@ public class RecComposeInspector implements Serializable {
      * @param ms     a {@link java.lang.reflect.Method} object.
      */
     public RecComposeInspector(Class<?> clazz, List<Method> ms) {
+        LoggingUtils.getEvoLogger().info("*** RecComposeInspector>>new ***");
         this.clazz = clazz;
         methods = ms;
         for(Method m: methods) {
@@ -53,7 +55,7 @@ public class RecComposeInspector implements Serializable {
      */
     public Object getValue(Object object) throws IllegalArgumentException,
             IllegalAccessException, InvocationTargetException {
-
+        LoggingUtils.getEvoLogger().info("*** RecComposeInspector>>getValue ***");
         boolean needsSandbox = !Sandbox.isOnAndExecutingSUTCode();
         boolean safe = Sandbox.isSafeToExecuteSUTCode();
 
@@ -96,6 +98,25 @@ public class RecComposeInspector implements Serializable {
         return methods;
     }
 
+
+    public RecComposeInspector extend(Method method){
+        List<Method> list= new ArrayList<>();
+        list.addAll(methods);
+        list.add(method);
+        RecComposeInspector ni=new RecComposeInspector(clazz,list);
+        return ni;
+    }
+
+    public boolean hasAMethodFromObjectClass(){
+        for(Method m: methods){
+            if(m.getDeclaringClass().equals(Object.class)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     /**
      * <p>
      * getMethodCall
@@ -104,6 +125,7 @@ public class RecComposeInspector implements Serializable {
      * @return a {@link java.lang.String} object.
      */
     public String getMethodCalls() {
+        LoggingUtils.getEvoLogger().info("*** RecComposeInspector>>getMethodCalls ***");
         StringBuilder call=new StringBuilder();
         int last =methods.size()-1;
         for(int i=0;i<last;i++){

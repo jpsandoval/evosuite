@@ -1155,7 +1155,7 @@ public class Properties {
     }
 
     @Parameter(key = "assertion_strategy", group = "Output", description = "Which assertions to generate")
-    public static AssertionStrategy ASSERTION_STRATEGY = AssertionStrategy.MUTATION;
+    public static AssertionStrategy ASSERTION_STRATEGY = AssertionStrategy.ALL;
 
     @Parameter(key = "filter_assertions", group = "Output", description = "Filter flaky assertions")
     public static boolean FILTER_ASSERTIONS = false;

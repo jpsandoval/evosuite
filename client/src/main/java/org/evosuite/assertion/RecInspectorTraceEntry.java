@@ -1,6 +1,7 @@
 package org.evosuite.assertion;
 
 import org.evosuite.testcase.variable.VariableReference;
+import org.evosuite.utils.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,6 +132,7 @@ public class RecInspectorTraceEntry implements OutputTraceEntry {
      */
     @Override
     public Set<Assertion> getAssertions() {
+        LoggingUtils.getEvoLogger().info("---- RecInspectorTraceEntry>>getAssertions");
         Set<Assertion> assertions = new HashSet<>();
 
         for (RecComposeInspector inspector : inspectorMap.keySet()) {

@@ -31,9 +31,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-public class InspectorManager {
+public class RecInspectorManager {
 
-    private static InspectorManager instance = null;
+    private static RecInspectorManager instance = null;
 
     private static final Logger logger = LoggerFactory
             .getLogger(InspectorManager.class);
@@ -42,7 +42,7 @@ public class InspectorManager {
 
     private final Map<String, List<String>> blackList = new HashMap<>();
 
-    private InspectorManager() {
+    private RecInspectorManager() {
         // TODO: Need to replace this with proper analysis
         // readInspectors();
         initializeBlackList();
@@ -125,9 +125,9 @@ public class InspectorManager {
      *
      * @return a {@link org.evosuite.assertion.InspectorManager} object.
      */
-    public static InspectorManager getInstance() {
+    public static RecInspectorManager getInstance() {
         if (instance == null) {
-            instance = new InspectorManager();
+            instance = new RecInspectorManager();
         }
         return instance;
     }
@@ -140,10 +140,10 @@ public class InspectorManager {
         if (!Modifier.isPublic(method.getModifiers()))
             return false;
 
-        if (!method.getReturnType().isPrimitive()
-                && !method.getReturnType().equals(String.class)
-                && !method.getReturnType().isEnum()
-                && !ClassUtils.isPrimitiveWrapper(method.getReturnType())) {
+        if (method.getReturnType().isPrimitive()
+                && method.getReturnType().equals(String.class)
+                && method.getReturnType().isEnum()
+                && ClassUtils.isPrimitiveWrapper(method.getReturnType())) {
             return false;
         }
 
