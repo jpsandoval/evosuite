@@ -64,6 +64,8 @@ public abstract class AssertionGenerator {
 
     protected static final InspectorTraceObserver inspectorObserver = new InspectorTraceObserver();
 
+    protected static final RecInspectorTraceObserver recInspectorTraceObserver = new RecInspectorTraceObserver();
+
     protected static final PrimitiveFieldTraceObserver fieldObserver = new PrimitiveFieldTraceObserver();
 
     protected static final NullTraceObserver nullObserver = new NullTraceObserver();
@@ -82,7 +84,8 @@ public abstract class AssertionGenerator {
     public AssertionGenerator() {
         TestCaseExecutor.getInstance().addObserver(primitiveObserver);
         TestCaseExecutor.getInstance().addObserver(comparisonObserver);
-        TestCaseExecutor.getInstance().addObserver(inspectorObserver);
+        //aqui quite el inspector normal, porque el recursivo tb hara el normal... que es el caso base de la recursion
+        TestCaseExecutor.getInstance().addObserver(recInspectorTraceObserver);
         TestCaseExecutor.getInstance().addObserver(fieldObserver);
         TestCaseExecutor.getInstance().addObserver(nullObserver);
         TestCaseExecutor.getInstance().addObserver(sameObserver);
