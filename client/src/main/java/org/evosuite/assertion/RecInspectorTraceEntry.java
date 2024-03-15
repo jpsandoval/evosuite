@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.TreeMap;
-import java.util.HashSet;
+import java.util.TreeSet;
 
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +40,7 @@ public class RecInspectorTraceEntry implements OutputTraceEntry {
      * @param value     a {@link java.lang.Object} object.
      */
     public void addValue(RecComposeInspector inspector, Object value) {
+        LoggingUtils.getEvoLogger().info(inspector.getMethodCalls()+" => "+ value.toString());
         inspectorMap.put(inspector, value);
         methodInspectorMap.put(inspector.getClassName() + " " + inspector.getMethodCalls(), inspector);
     }
@@ -97,7 +98,7 @@ public class RecInspectorTraceEntry implements OutputTraceEntry {
      */
     @Override
     public Set<Assertion> getAssertions(OutputTraceEntry other) {
-        Set<Assertion> assertions = new HashSet<>();
+        Set<Assertion> assertions = new TreeSet<>();
 
         if (other instanceof org.evosuite.assertion.InspectorTraceEntry) {
             RecInspectorTraceEntry otherEntry = (RecInspectorTraceEntry) other;
@@ -132,15 +133,18 @@ public class RecInspectorTraceEntry implements OutputTraceEntry {
      */
     @Override
     public Set<Assertion> getAssertions() {
-        LoggingUtils.getEvoLogger().info("---- RecInspectorTraceEntry>>getAssertions");
-        Set<Assertion> assertions = new HashSet<>();
 
+        Set<Assertion> assertions = new TreeSet<>();
+
+        LoggingUtils.getEvoLogger().info("---- RecInspectorTraceEntry>>getAssertions  "+ inspectorMap.keySet().size());
         for (RecComposeInspector inspector : inspectorMap.keySet()) {
+
             RecInspectorAssertion assertion = new RecInspectorAssertion();
             assertion.value = inspectorMap.get(inspector);
             assertion.inspector = inspector;
             assertion.source = var;
             assertions.add(assertion);
+            LoggingUtils.getEvoLogger().info("assertion - +++++  "+assertion.getCode());
             assert (assertion.isValid());
         }
         return assertions;

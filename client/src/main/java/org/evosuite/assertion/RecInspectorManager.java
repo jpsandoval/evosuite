@@ -24,6 +24,7 @@ import org.evosuite.Properties;
 import org.evosuite.runtime.mock.MockList;
 import org.evosuite.setup.TestUsageChecker;
 import org.evosuite.utils.JdkPureMethodsList;
+import org.evosuite.utils.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -221,13 +222,13 @@ public class RecInspectorManager {
         }
         if (!TestUsageChecker.canUse(clazz))
             return;
+
         List<Inspector> inspectorList = new ArrayList<>();
         for (Method method : clazz.getMethods()) {
             if (isInspectorMethod(method)) { // FIXXME
                 logger.debug("Inspector for class " + clazz.getSimpleName()
                         + ": " + method.getName() + " defined in "
                         + method.getDeclaringClass().getCanonicalName());
-
                 inspectorList.add(new Inspector(clazz, method));
             } else {
                 logger.debug("Not an inspector: " + method.getName());

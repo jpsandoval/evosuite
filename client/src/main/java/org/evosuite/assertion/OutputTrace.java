@@ -22,6 +22,7 @@ package org.evosuite.assertion;
 import org.evosuite.Properties;
 import org.evosuite.testcase.TestCase;
 import org.evosuite.testcase.variable.VariableReference;
+import org.evosuite.utils.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,7 @@ public class OutputTrace<T extends OutputTraceEntry> implements Cloneable {
      * @param position a int.
      * @param entry    a T object.
      * @param var      a {@link org.evosuite.testcase.variable.VariableReference} object.
-     * @param <T>      a T object.
+
      */
     public synchronized void addEntry(int position, VariableReference var, T entry) {
         if (!trace.containsKey(position))
@@ -148,6 +149,8 @@ public class OutputTrace<T extends OutputTraceEntry> implements Cloneable {
                 logger.debug("Other trace contains " + statement);
                 for (Integer var : trace.get(statement).keySet()) {
                     logger.debug("Variable " + var);
+
+                    LoggingUtils.getEvoLogger().info("trace entry: "+trace.get(statement).get(var).getClass().getName());
                     for (Assertion assertion : trace.get(statement).get(var).getAssertions(other.trace.get(statement).get(var))) {
                         assert (assertion.isValid()) : "Invalid assertion: "
                                 + assertion.getCode() + ", " + assertion.value;
@@ -175,6 +178,7 @@ public class OutputTrace<T extends OutputTraceEntry> implements Cloneable {
                 for (Assertion assertion : trace.get(statement).get(var).getAssertions()) {
                     assert (assertion.isValid()) : "Invalid assertion: "
                             + assertion.getCode() + ", " + assertion.value;
+
                     if (test.sizeWithAssertions() >= Properties.MAX_LENGTH_TEST_CASE) {
                         return num;
                     }

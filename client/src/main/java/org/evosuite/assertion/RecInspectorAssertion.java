@@ -7,7 +7,7 @@ import org.evosuite.testcase.statements.Statement;
 import org.evosuite.testcase.variable.VariableReference;
 import org.evosuite.utils.NumberFormatter;
 
-public class RecInspectorAssertion extends Assertion {
+public class RecInspectorAssertion extends Assertion implements  Comparable<RecInspectorAssertion>{
 
     private static final long serialVersionUID = -4080051661226820222L;
 
@@ -16,6 +16,9 @@ public class RecInspectorAssertion extends Assertion {
 
     public RecInspectorAssertion() {
 
+    }
+    public int compareTo(RecInspectorAssertion other){
+        return inspector.compareTo(other.getInspector());
     }
 
     public RecInspectorAssertion(RecComposeInspector inspector, Statement statement, VariableReference source, Object value) {

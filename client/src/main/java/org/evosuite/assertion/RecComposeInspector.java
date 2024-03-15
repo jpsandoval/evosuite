@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class RecComposeInspector implements Serializable {
+public class RecComposeInspector implements Serializable, Comparable<RecComposeInspector> {
 
     private static final long serialVersionUID = -6865880297202184953L;
 
@@ -31,10 +31,14 @@ public class RecComposeInspector implements Serializable {
      * </p>
      *
      * @param clazz a {@link java.lang.Class} object.
-     * @param ms     a {@link java.lang.reflect.Method} object.
      */
+    public RecComposeInspector(Class<?> clazz) {
+        this.clazz = clazz;
+        methods = new ArrayList<>();
+    }
+
+
     public RecComposeInspector(Class<?> clazz, List<Method> ms) {
-        LoggingUtils.getEvoLogger().info("*** RecComposeInspector>>new ***");
         this.clazz = clazz;
         methods = ms;
         for(Method m: methods) {
@@ -103,7 +107,7 @@ public class RecComposeInspector implements Serializable {
         List<Method> list= new ArrayList<>();
         list.addAll(methods);
         list.add(method);
-        RecComposeInspector ni=new RecComposeInspector(clazz,list);
+        RecComposeInspector ni=new RecComposeInspector(method.getDeclaringClass(),list);
         return ni;
     }
 
@@ -125,11 +129,11 @@ public class RecComposeInspector implements Serializable {
      * @return a {@link java.lang.String} object.
      */
     public String getMethodCalls() {
-        LoggingUtils.getEvoLogger().info("*** RecComposeInspector>>getMethodCalls ***");
+        if(methods.isEmpty()) return "";
         StringBuilder call=new StringBuilder();
         int last =methods.size()-1;
         for(int i=0;i<last;i++){
-            call.append(methods.get(i).getName());
+            call.append(methods.get(i).getName()+"()");
             call.append(".");
         }
         call.append(methods.get(last).getName());
@@ -143,6 +147,8 @@ public class RecComposeInspector implements Serializable {
      *
      * @return a {@link java.lang.String} object.
      */
+
+    public Class<?> getClazz(){return this.clazz;}
     public String getClassName() {
         return clazz.getName();
     }
@@ -206,5 +212,10 @@ public class RecComposeInspector implements Serializable {
     }
 
 
+    @Override
+    public int compareTo(RecComposeInspector o) {
+        if(this.equals(o)) return 0;
+        return this.methods.size() - o.methods.size();
+    }
 }
 

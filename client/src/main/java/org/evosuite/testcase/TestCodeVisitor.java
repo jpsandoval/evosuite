@@ -685,6 +685,70 @@ public class TestCodeVisitor extends TestVisitor {
                     + inspector.getMethodCall() + "());";
     }
 
+    protected void visitRecInspectorAssertion(RecInspectorAssertion assertion) {
+        VariableReference source = assertion.getSource();
+        Object value = assertion.getValue();
+        RecComposeInspector inspector = assertion.getInspector();
+        Class<?> generatedType = inspector.getReturnType();
+
+        if (value == null) {
+            testCode += "assertNull(" + getVariableName(source) + "."
+                    + inspector.getMethodCalls() + "());";
+        } else if (value.getClass().equals(Long.class)) {
+            testCode += "assertEquals(" + NumberFormatter.getNumberString(value, this) + ", ";
+            if (ClassUtils.isPrimitiveWrapper(generatedType))
+                testCode += "(long)";
+            testCode += getVariableName(source) + "." + inspector.getMethodCalls() + "());";
+        } else if (value.getClass().equals(Short.class)) {
+            testCode += "assertEquals(" + NumberFormatter.getNumberString(value, this) + ", ";
+            if (ClassUtils.isPrimitiveWrapper(generatedType))
+                testCode += "(short)";
+            testCode += getVariableName(source) + "." + inspector.getMethodCalls() + "());";
+        } else if (value.getClass().equals(Integer.class)) {
+            testCode += "assertEquals(" + NumberFormatter.getNumberString(value, this) + ", ";
+            if (ClassUtils.isPrimitiveWrapper(generatedType))
+                testCode += "(int)";
+            testCode += getVariableName(source) + "." + inspector.getMethodCalls() + "());";
+        } else if (value.getClass().equals(Byte.class)) {
+            testCode += "assertEquals(" + NumberFormatter.getNumberString(value, this) + ", ";
+            if (ClassUtils.isPrimitiveWrapper(generatedType))
+                testCode += "(byte)";
+            testCode += getVariableName(source) + "." + inspector.getMethodCalls() + "());";
+        } else if (value.getClass().equals(Float.class)) {
+            testCode += "assertEquals(" + NumberFormatter.getNumberString(value, this) + ", ";
+            testCode += getVariableName(source) + "." + inspector.getMethodCalls()
+                    + "(), " + NumberFormatter.getNumberString(Properties.FLOAT_PRECISION, this) + ");";
+        } else if (value.getClass().equals(Double.class)) {
+            testCode += "assertEquals(" + NumberFormatter.getNumberString(value, this) + ", ";
+            testCode += getVariableName(source) + "." + inspector.getMethodCalls()
+                    + "(), " + NumberFormatter.getNumberString(Properties.DOUBLE_PRECISION, this) + ");";
+        } else if (value.getClass().equals(Character.class)) {
+            testCode += "assertEquals(" + NumberFormatter.getNumberString(value, this) + ", ";
+            if (ClassUtils.isPrimitiveWrapper(generatedType))
+                testCode += "(char)";
+            testCode += getVariableName(source) + "." + inspector.getMethodCalls() + "());";
+        } else if (value.getClass().equals(String.class)) {
+            testCode += "assertEquals(" + NumberFormatter.getNumberString(value, this) + ", ";
+            testCode += getVariableName(source) + "." + inspector.getMethodCalls() + "());";
+        } else if (value.getClass().isEnum() || value instanceof Enum) {
+            testCode += "assertEquals(" + NumberFormatter.getNumberString(value, this) + ", "
+                    + getVariableName(source) + "." + inspector.getMethodCalls() + "());";
+            // Make sure the enum is imported in the JUnit test
+            getClassName(value.getClass());
+
+        } else if (value.getClass().equals(boolean.class) || value.getClass().equals(Boolean.class)) {
+            if ((Boolean) value)
+                testCode += "assertTrue(" + getVariableName(source) + "."
+                        + inspector.getMethodCalls() + "());";
+            else
+                testCode += "assertFalse(" + getVariableName(source) + "."
+                        + inspector.getMethodCalls() + "());";
+
+        } else
+            testCode += "assertEquals(" + value + ", " + getVariableName(source) + "."
+                    + inspector.getMethodCalls() + "());";
+    }
+
     /**
      * <p>
      * visitNullAssertion
@@ -847,6 +911,8 @@ public class TestCodeVisitor extends TestVisitor {
             visitPrimitiveFieldAssertion((PrimitiveFieldAssertion) assertion);
         } else if (assertion instanceof InspectorAssertion) {
             visitInspectorAssertion((InspectorAssertion) assertion);
+        } else if (assertion instanceof RecInspectorAssertion) {
+            visitRecInspectorAssertion((RecInspectorAssertion) assertion);
         } else if (assertion instanceof NullAssertion) {
             visitNullAssertion((NullAssertion) assertion);
         } else if (assertion instanceof CompareAssertion) {
