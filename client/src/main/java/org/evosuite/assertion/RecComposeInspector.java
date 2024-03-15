@@ -25,6 +25,7 @@ public class RecComposeInspector implements Serializable, Comparable<RecComposeI
     //methods
     private transient List<Method> methods;
 
+
     /**
      * <p>
      * Constructor for Inspector.
@@ -36,6 +37,7 @@ public class RecComposeInspector implements Serializable, Comparable<RecComposeI
         this.clazz = clazz;
         methods = new ArrayList<>();
     }
+
 
 
     public RecComposeInspector(Class<?> clazz, List<Method> ms) {
@@ -59,7 +61,7 @@ public class RecComposeInspector implements Serializable, Comparable<RecComposeI
      */
     public Object getValue(Object object) throws IllegalArgumentException,
             IllegalAccessException, InvocationTargetException {
-        LoggingUtils.getEvoLogger().info("*** RecComposeInspector>>getValue ***");
+        //LoggingUtils.getEvoLogger().info("*** RecComposeInspector>>getValue ***");
         boolean needsSandbox = !Sandbox.isOnAndExecutingSUTCode();
         boolean safe = Sandbox.isSafeToExecuteSUTCode();
 
@@ -72,13 +74,12 @@ public class RecComposeInspector implements Serializable, Comparable<RecComposeI
         Object ret = null;
 
         try {
-            if(this.methods.size()>0){
+            if (this.methods.size() > 0) {
                 ret = object;
             }
-            for(Method m: this.methods) {
+            for (Method m : this.methods) {
                 ret = m.invoke(ret);
             }
-
         } finally {
             if (needsSandbox) {
                 if (!safe)
@@ -107,8 +108,15 @@ public class RecComposeInspector implements Serializable, Comparable<RecComposeI
         List<Method> list= new ArrayList<>();
         list.addAll(methods);
         list.add(method);
-        RecComposeInspector ni=new RecComposeInspector(method.getDeclaringClass(),list);
+        RecComposeInspector ni=new RecComposeInspector(clazz,list);
+
         return ni;
+    }
+    public void printMethods(){
+        LoggingUtils.getEvoLogger().info("methods:");
+        for(Method m: methods){
+            LoggingUtils.getEvoLogger().info(m.getName());
+        }
     }
 
     public boolean hasAMethodFromObjectClass(){
@@ -130,6 +138,7 @@ public class RecComposeInspector implements Serializable, Comparable<RecComposeI
      */
     public String getMethodCalls() {
         if(methods.isEmpty()) return "";
+
         StringBuilder call=new StringBuilder();
         int last =methods.size()-1;
         for(int i=0;i<last;i++){
@@ -207,8 +216,14 @@ public class RecComposeInspector implements Serializable, Comparable<RecComposeI
     @Override
     public int hashCode() {
         final int prime = 31;
-        LoggingUtils.getEvoLogger().warn("********* this method should not be called: CompositeInspector>>hashCode ***********");
-        return prime;
+        int result = 1;
+        result = prime * result + ((clazz == null) ? 0 : clazz.hashCode());
+        if(methods!=null) {
+            for (Method m : methods) {
+                result = prime * result + ((m == null) ? 0 : m.hashCode());
+            }
+        }
+        return result;
     }
 
 

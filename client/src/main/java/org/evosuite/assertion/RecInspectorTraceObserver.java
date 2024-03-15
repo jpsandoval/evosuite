@@ -57,52 +57,53 @@ public class RecInspectorTraceObserver extends AssertionTraceObserver<RecInspect
 
         RecInspectorTraceEntry entry = new RecInspectorTraceEntry(var);
         RecComposeInspector emptyInspector = new RecComposeInspector(var.getVariableClass());
-        fillInjectors(entry, scope, var, emptyInspector, statement, 0);
+        fillInspectors(entry, scope, var, emptyInspector, statement, 0, var.getVariableClass());
         trace.addEntry(statement.getPosition(), var, entry);
 
     }
 
-    public void fillInjectors(RecInspectorTraceEntry entry,     Scope scope, VariableReference var, RecComposeInspector lastInspector, Statement statement, int level){
+    public void fillInspectors(RecInspectorTraceEntry entry, Scope scope, VariableReference var, RecComposeInspector lastInspector, Statement statement, int level, Class<?> lastClass){
         if(level>1) return;
-        LoggingUtils.getEvoLogger().info("current: "+lastInspector.getMethodCalls());
-        fillPrimitiveInjectors(entry, scope, var, lastInspector, statement, level);
-        fillObjectInjectors(entry, scope, var, lastInspector, statement, level);
+        fillPrimitiveInspectors(entry, scope, var, lastInspector, statement, level,lastClass);
+        fillObjectInspectors(entry, scope, var, lastInspector, statement, level, lastClass);
+
     }
 
-    public void fillPrimitiveInjectors(RecInspectorTraceEntry entry,     Scope scope, VariableReference var, RecComposeInspector lastInspector, Statement statement, int level){
+    public void fillPrimitiveInspectors(RecInspectorTraceEntry entry,     Scope scope, VariableReference var, RecComposeInspector lastInspector, Statement statement, int level, Class<?> lastClass){
         // el getClazz de inspector devuelve la clase del ultimo getter
-        List<Inspector> inspectors = InspectorManager.getInstance().getInspectors(lastInspector.getClazz());
+        lastInspector.printMethods();
+        List<Inspector> inspectors = InspectorManager.getInstance().getInspectors(lastClass);
         for (Inspector i : inspectors) {
-            LoggingUtils.getEvoLogger().info("primitive "+i.getClassName()+">>"+i.getMethodCall());
             fillPrimitiveInspector(entry, scope,var, statement,lastInspector.extend(i.getMethod()));
         }
     }
-    public void fillObjectInjectors(RecInspectorTraceEntry entry,Scope scope, VariableReference var, RecComposeInspector lastInspector, Statement statement, int level) {
+    public void fillObjectInspectors(RecInspectorTraceEntry entry,Scope scope, VariableReference var, RecComposeInspector lastInspector, Statement statement, int level, Class<?> lastClass) {
         // el getClazz de inspector devuelve la clase del ultimo getter
-        List<Inspector> objectInspectors = RecInspectorManager.getInstance().getInspectors(lastInspector.getClazz());
+        List<Inspector> objectInspectors = RecInspectorManager.getInstance().getInspectors(lastClass);
         for (Inspector oi : objectInspectors) {
-            LoggingUtils.getEvoLogger().info("object "+oi.getClassName()+">>"+oi.getMethodCall());
-            fillInjectors(entry, scope,var, lastInspector.extend(oi.getMethod()),statement, level+1);
+            try {
+                RecComposeInspector ins = lastInspector.extend(oi.getMethod());
+                Object target = var.getObject(scope);
+                Object lastValue = ins.getValue(target);
+                fillInspectors(entry, scope, var, ins, statement, level + 1,lastValue.getClass());
+            }catch (Exception e){
+                LoggingUtils.getEvoLogger().info(e.getMessage());
+            }
         }
     }
 
     public void fillPrimitiveInspector(RecInspectorTraceEntry entry,Scope scope, VariableReference var,Statement statement, RecComposeInspector i){
-        LoggingUtils.getEvoLogger().info(" A ");
-        if (i.hasAMethodFromObjectClass())
-            return;
 
+        if (i.hasAMethodFromObjectClass())
+            return ;
         try {
-            LoggingUtils.getEvoLogger().info(" B ");
             Object target = var.getObject(scope);
-            LoggingUtils.getEvoLogger().info("target: "+target.toString());
             if (target != null) {
                 // Don't call inspector methods on mock objects
                 if (target.getClass().getCanonicalName().contains("EnhancerByMockito"))
                     return;
                 //el problema es que ejecutaremos muchas veces el mismo getter, y tardara mas
                 Object value = i.getValue(target);
-                LoggingUtils.getEvoLogger().info("C");
-                LoggingUtils.getEvoLogger().info("Inspector " + i.getMethodCalls() + " is: " + value.toString());
                 // We need no assertions that include the memory location
                 if (value instanceof String) {
                     // String literals may not be longer than 32767
@@ -129,9 +130,8 @@ public class RecInspectorTraceObserver extends AssertionTraceObserver<RecInspect
                     }
                 }
 
-                LoggingUtils.getEvoLogger().info("inspector: " + i.getMethodCalls()+ " value: "+ value.toString());
+                //LoggingUtils.getEvoLogger().info("inspector: " + i.getMethodCalls()+ " value: "+ value.toString());
                 entry.addValue(i, value);
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -146,11 +146,13 @@ public class RecInspectorTraceObserver extends AssertionTraceObserver<RecInspect
                 logger.debug("Exception during call to inspector: " + e + " - "
                         + e.getCause());
             }
+        } finally {
+            logger.debug("Found " + entry.size() + " inspectors for " + var
+                    + " at statement " + statement.getPosition());
+
         }
 
 
-        logger.debug("Found " + entry.size() + " inspectors for " + var
-                + " at statement " + statement.getPosition());
 
 
     }

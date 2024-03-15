@@ -5,11 +5,7 @@ import org.evosuite.utils.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -20,8 +16,8 @@ import java.util.Set;
 public class RecInspectorTraceEntry implements OutputTraceEntry {
 
     private final static Logger logger = LoggerFactory.getLogger(org.evosuite.assertion.InspectorTraceEntry.class);
-    private final Map<RecComposeInspector, Object> inspectorMap = new TreeMap<>();
-    private final Map<String, RecComposeInspector> methodInspectorMap = new TreeMap<>();
+    private final Map<RecComposeInspector, Object> inspectorMap = new HashMap<>();
+    private final Map<String, RecComposeInspector> methodInspectorMap = new HashMap<>();
     private final VariableReference var;
 
     /**
@@ -40,7 +36,7 @@ public class RecInspectorTraceEntry implements OutputTraceEntry {
      * @param value     a {@link java.lang.Object} object.
      */
     public void addValue(RecComposeInspector inspector, Object value) {
-        LoggingUtils.getEvoLogger().info(inspector.getMethodCalls()+" => "+ value.toString());
+        //LoggingUtils.getEvoLogger().info(inspector.getMethodCalls()+" => "+ value.toString());
         inspectorMap.put(inspector, value);
         methodInspectorMap.put(inspector.getClassName() + " " + inspector.getMethodCalls(), inspector);
     }
@@ -98,7 +94,7 @@ public class RecInspectorTraceEntry implements OutputTraceEntry {
      */
     @Override
     public Set<Assertion> getAssertions(OutputTraceEntry other) {
-        Set<Assertion> assertions = new TreeSet<>();
+        Set<Assertion> assertions = new HashSet<>();
 
         if (other instanceof org.evosuite.assertion.InspectorTraceEntry) {
             RecInspectorTraceEntry otherEntry = (RecInspectorTraceEntry) other;
@@ -134,9 +130,9 @@ public class RecInspectorTraceEntry implements OutputTraceEntry {
     @Override
     public Set<Assertion> getAssertions() {
 
-        Set<Assertion> assertions = new TreeSet<>();
+        Set<Assertion> assertions = new HashSet<>();
 
-        LoggingUtils.getEvoLogger().info("---- RecInspectorTraceEntry>>getAssertions  "+ inspectorMap.keySet().size());
+
         for (RecComposeInspector inspector : inspectorMap.keySet()) {
 
             RecInspectorAssertion assertion = new RecInspectorAssertion();

@@ -142,9 +142,9 @@ public class RecInspectorManager {
             return false;
 
         if (method.getReturnType().isPrimitive()
-                && method.getReturnType().equals(String.class)
-                && method.getReturnType().isEnum()
-                && ClassUtils.isPrimitiveWrapper(method.getReturnType())) {
+            || method.getReturnType().equals(String.class) ||
+                method.getReturnType().isEnum()
+                || ClassUtils.isPrimitiveWrapper(method.getReturnType())) {
             return false;
         }
 
@@ -181,9 +181,9 @@ public class RecInspectorManager {
         if (isAWTToString(method))
             return false;
 
-        if (Properties.PURE_INSPECTORS) {
-            return CheapPurityAnalyzer.getInstance().isPure(method);
-        }
+        //if (Properties.PURE_INSPECTORS) {
+          //  return CheapPurityAnalyzer.getInstance().isPure(method);
+        //}
 
         return true;
 
@@ -224,14 +224,17 @@ public class RecInspectorManager {
             return;
 
         List<Inspector> inspectorList = new ArrayList<>();
+        //LoggingUtils.getEvoLogger().info("--- Object inspectors of "+clazz.getName()+" ---");
         for (Method method : clazz.getMethods()) {
             if (isInspectorMethod(method)) { // FIXXME
                 logger.debug("Inspector for class " + clazz.getSimpleName()
                         + ": " + method.getName() + " defined in "
                         + method.getDeclaringClass().getCanonicalName());
                 inspectorList.add(new Inspector(clazz, method));
+                //LoggingUtils.getEvoLogger().info("si "+method.getName());
             } else {
                 logger.debug("Not an inspector: " + method.getName());
+                //LoggingUtils.getEvoLogger().info("no "+method.getName());
             }
         }
         inspectors.put(clazz, inspectorList);
