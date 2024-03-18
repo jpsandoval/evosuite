@@ -131,16 +131,12 @@ public class RecInspectorTraceEntry implements OutputTraceEntry {
     public Set<Assertion> getAssertions() {
 
         Set<Assertion> assertions = new HashSet<>();
-
-
         for (RecComposeInspector inspector : inspectorMap.keySet()) {
-
             RecInspectorAssertion assertion = new RecInspectorAssertion();
             assertion.value = inspectorMap.get(inspector);
             assertion.inspector = inspector;
             assertion.source = var;
             assertions.add(assertion);
-            LoggingUtils.getEvoLogger().info("assertion - +++++  "+assertion.getCode());
             assert (assertion.isValid());
         }
         return assertions;

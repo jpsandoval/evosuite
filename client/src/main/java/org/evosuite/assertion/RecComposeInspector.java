@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class RecComposeInspector implements Serializable, Comparable<RecComposeInspector> {
+public class RecComposeInspector implements Serializable{
 
     private static final long serialVersionUID = -6865880297202184953L;
 
@@ -199,18 +199,83 @@ public class RecComposeInspector implements Serializable, Comparable<RecComposeI
         }
     }
 
-    public void changeClassLoader(ClassLoader loader) {
+    public void changeClassLoader(ClassLoader loader){
 
-        LoggingUtils.getEvoLogger().warn("********* this method should not be called: CompositeInspector>>changeClassLoader ***********");
+        try {
+            for(int i=0; i< this.methods.size();i++) {
+                Method method = methods.get(i);
+                Class<?> oldClass = method.getDeclaringClass();
+                Class<?> newClass = loader.loadClass(oldClass.getName());
+                for (Method newMethod : TestClusterUtils.getMethods(newClass)) {
+                    if (newMethod.getName().equals(method.getName())) {
+                        boolean equals = true;
+                        Class<?>[] oldParameters = method.getParameterTypes();
+                        Class<?>[] newParameters = newMethod.getParameterTypes();
+                        if (oldParameters.length != newParameters.length)
+                            continue;
+
+                        if (!newMethod.getDeclaringClass().getName().equals(method.getDeclaringClass().getName()))
+                            continue;
+
+                        if (!newMethod.getReturnType().getName().equals(method.getReturnType().getName()))
+                            continue;
+
+                        for (int j = 0; j < newParameters.length; j++) {
+                            if (!oldParameters[j].getName().equals(newParameters[i].getName())) {
+                                equals = false;
+                                break;
+                            }
+                        }
+                        if (equals) {
+                            this.methods.set(i,newMethod);
+                            newMethod.setAccessible(true);
+                            return;
+                        }
+                    }
+                }
+                LoggingUtils.getEvoLogger().info("Method not found - keeping old class loader ");
+            }
+        } catch (ClassNotFoundException e) {
+            LoggingUtils.getEvoLogger().info("Class not found - keeping old class loader ", e);
+        } catch (SecurityException e) {
+            LoggingUtils.getEvoLogger().info("Class not found - keeping old class loader ", e);
+        }
     }
     private void writeObject(ObjectOutputStream oos) throws IOException {
-        LoggingUtils.getEvoLogger().warn("********* this method should not be called: CompositeInspector>>writeObject ***********");
+        oos.defaultWriteObject();
+        // Write/save additional fields
+        oos.writeObject(clazz.getName());
+        oos.writeObject(new Integer(methods.size()));
+        for(Method method: methods) {
+            oos.writeObject(method.getDeclaringClass().getName());
+            oos.writeObject(method.getName());
+            oos.writeObject(Type.getMethodDescriptor(method));
+        }
     }
 
     // assumes "static java.util.Date aDate;" declared
-    private void readObject(ObjectInputStream ois) throws ClassNotFoundException,
-            IOException {
-        LoggingUtils.getEvoLogger().warn("********* this method should not be called: CompositeInspector>>readObject ***********");
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
+        // Read/initialize additional fields
+        this.clazz = TestGenerationContext.getInstance().getClassLoaderForSUT().loadClass((String) ois.readObject());
+
+        Integer numberOfMethods = (Integer) ois.readObject();
+        methods = new ArrayList<>();
+
+        for(int i=0;i< numberOfMethods;i++) {
+            Class<?> methodClass = TestGenerationContext.getInstance().getClassLoaderForSUT().loadClass((String) ois.readObject());
+            String methodName = (String) ois.readObject();
+            String methodDesc = (String) ois.readObject();
+
+            for (Method method : methodClass.getDeclaredMethods()) {
+                if (method.getName().equals(methodName)) {
+                    if (Type.getMethodDescriptor(method).equals(methodDesc)) {
+                        methods.add(method);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -225,12 +290,6 @@ public class RecComposeInspector implements Serializable, Comparable<RecComposeI
         }
         return result;
     }
-
-
-    @Override
-    public int compareTo(RecComposeInspector o) {
-        if(this.equals(o)) return 0;
-        return this.methods.size() - o.methods.size();
-    }
 }
+
 

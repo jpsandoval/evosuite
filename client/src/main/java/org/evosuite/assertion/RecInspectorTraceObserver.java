@@ -87,7 +87,7 @@ public class RecInspectorTraceObserver extends AssertionTraceObserver<RecInspect
                 Object lastValue = ins.getValue(target);
                 fillInspectors(entry, scope, var, ins, statement, level + 1,lastValue.getClass());
             }catch (Exception e){
-                LoggingUtils.getEvoLogger().info(e.getMessage());
+                LoggingUtils.getEvoLogger().error(e.getMessage());
             }
         }
     }
