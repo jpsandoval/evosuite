@@ -181,9 +181,12 @@ public class RecInspectorManager {
         if (isAWTToString(method))
             return false;
 
+        if(!method.getName().startsWith("get")){
+            return false;
+        }
         //if (Properties.PURE_INSPECTORS) {
           //  return CheapPurityAnalyzer.getInstance().isPure(method);
-        //}
+        //}s
 
         return true;
 

@@ -109,7 +109,6 @@ public class RecComposeInspector implements Serializable{
         list.addAll(methods);
         list.add(method);
         RecComposeInspector ni=new RecComposeInspector(clazz,list);
-
         return ni;
     }
     public void printMethods(){
