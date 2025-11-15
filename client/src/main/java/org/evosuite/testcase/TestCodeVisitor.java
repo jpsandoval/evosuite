@@ -31,6 +31,7 @@ import org.evosuite.Properties;
 import org.evosuite.TestGenerationContext;
 import org.evosuite.assertion.*;
 import org.evosuite.classpath.ResourceList;
+import org.evosuite.coverage.mutation.Mutation;
 import org.evosuite.runtime.TooManyResourcesException;
 import org.evosuite.runtime.ViolatedAssumptionAnswer;
 import org.evosuite.runtime.mock.EvoSuiteMock;
@@ -839,6 +840,22 @@ public class TestCodeVisitor extends TestVisitor {
              * if the current test is unstable, then comment out all of its assertions.
              */
             testCode += "// " + getUnstableTestComment() + ": ";
+        }
+
+
+        Set<Mutation> killedMutants = assertion.getKilledMutations();
+        if (!killedMutants.isEmpty()) {
+            testCode += "// Kills: ";
+            boolean first = true;
+            for (Mutation m : killedMutants) {
+                if (!first) {
+                    testCode += ", ";
+                } else {
+                    first = false;
+                }
+                testCode += m.getMethodName() + "-" + m.getId();
+            }
+            testCode += "\n";
         }
 
         if (assertion instanceof PrimitiveAssertion) {

@@ -21,10 +21,7 @@ package org.evosuite;
 
 import org.evosuite.Properties.AssertionStrategy;
 import org.evosuite.Properties.Criterion;
-import org.evosuite.assertion.AssertionGenerator;
-import org.evosuite.assertion.CompleteAssertionGenerator;
-import org.evosuite.assertion.SimpleMutationAssertionGenerator;
-import org.evosuite.assertion.UnitAssertionGenerator;
+import org.evosuite.assertion.*;
 import org.evosuite.contracts.ContractChecker;
 import org.evosuite.coverage.branch.Branch;
 import org.evosuite.coverage.branch.BranchPool;
@@ -273,10 +270,13 @@ public class TestSuiteGeneratorHelper {
         AssertionGenerator asserter;
         ContractChecker.setActive(false);
 
+        LoggingUtils.getEvoLogger().info("strategy: "+AssertionStrategy.JUAMPI);
         if (Properties.ASSERTION_STRATEGY == AssertionStrategy.MUTATION) {
             asserter = new SimpleMutationAssertionGenerator();
         } else if (Properties.ASSERTION_STRATEGY == AssertionStrategy.ALL) {
             asserter = new CompleteAssertionGenerator();
+        } else if (Properties.ASSERTION_STRATEGY == AssertionStrategy.JUAMPI) {
+            asserter = new JuampiMutationAssertionGenerator();
         } else
             asserter = new UnitAssertionGenerator();
 

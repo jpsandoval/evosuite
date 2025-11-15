@@ -985,7 +985,7 @@ public class Properties {
     public static OutputFormat TEST_FORMAT = OutputFormat.JUNIT4;
 
     @Parameter(key = "test_comments", group = "Output", description = "Include a header with coverage information for each test")
-    public static boolean TEST_COMMENTS = false;
+    public static boolean TEST_COMMENTS = true;
 
     @Parameter(key = "test_scaffolding", group = "Output", description = "Generate all the scaffolding needed to run EvoSuite JUnit tests in a separate file")
     public static boolean TEST_SCAFFOLDING = true;
@@ -997,7 +997,7 @@ public class Properties {
     public static boolean NO_RUNTIME_DEPENDENCY = false;
 
     @Parameter(key = "print_to_system", group = "Output", description = "Allow test output on console")
-    public static boolean PRINT_TO_SYSTEM = false;
+    public static boolean PRINT_TO_SYSTEM = true;
 
     @Parameter(key = "plot", group = "Output", description = "Create plots of size and fitness")
     public static boolean PLOT = false;
@@ -1124,25 +1124,25 @@ public class Properties {
     public static boolean SAVE_ALL_DATA = true;
 
     @Parameter(key = "print_goals", group = "Output", description = "Print out goals of class under test")
-    public static boolean PRINT_GOALS = false;
+    public static boolean PRINT_GOALS = true;
 
     @Parameter(key = "all_goals_file", group = "Output", description = "File to which the list of all goals is written")
     public static String ALL_GOALS_FILE = REPORT_DIR + File.separator + "all.goals";
 
     @Parameter(key = "write_all_goals_file", group = "Output", description = "If enabled, the list of all goals is written to a file")
-    public static boolean WRITE_ALL_GOALS_FILE = false;
+    public static boolean WRITE_ALL_GOALS_FILE = true;
 
     @Parameter(key = "print_current_goals", group = "Output", description = "Print out current goal during test generation")
     public static boolean PRINT_CURRENT_GOALS = true;
 
     @Parameter(key = "print_covered_goals", group = "Output", description = "Print out covered goals during test generation")
-    public static boolean PRINT_COVERED_GOALS = false;
+    public static boolean PRINT_COVERED_GOALS = true;
 
     @Parameter(key = "print_missed_goals", group = "Output", description = "Print out missed goals at the end")
-    public static boolean PRINT_MISSED_GOALS = false;
+    public static boolean PRINT_MISSED_GOALS = true;
 
     @Parameter(key = "write_covered_goals_file", group = "Output", description = "Write covered goals file")
-    public static boolean WRITE_COVERED_GOALS_FILE = false;
+    public static boolean WRITE_COVERED_GOALS_FILE = true;
 
     @Parameter(key = "covered_goals_file", group = "Output", description = "File with relation of tests and covered goals")
     public static String COVERED_GOALS_FILE = REPORT_DIR + File.separator + "covered.goals";
@@ -1151,11 +1151,11 @@ public class Properties {
     public static boolean ASSERTIONS = true;
 
     public enum AssertionStrategy {
-        ALL, MUTATION, UNIT
+        ALL, MUTATION, UNIT, JUAMPI
     }
 
     @Parameter(key = "assertion_strategy", group = "Output", description = "Which assertions to generate")
-    public static AssertionStrategy ASSERTION_STRATEGY = AssertionStrategy.MUTATION;
+    public static AssertionStrategy ASSERTION_STRATEGY = AssertionStrategy.JUAMPI;
 
     @Parameter(key = "filter_assertions", group = "Output", description = "Filter flaky assertions")
     public static boolean FILTER_ASSERTIONS = false;

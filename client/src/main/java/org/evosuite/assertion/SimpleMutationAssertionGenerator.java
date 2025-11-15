@@ -101,7 +101,7 @@ public class SimpleMutationAssertionGenerator extends MutationAssertionGenerator
      * @param test   a {@link org.evosuite.testcase.TestCase} object.
      * @param killed a {@link java.util.Set} object.
      */
-    private void addAssertions(TestCase test, Set<Integer> killed) {
+    protected void addAssertions(TestCase test, Set<Integer> killed) {
         addAssertions(test, killed, mutants);
         filterRedundantNonnullAssertions(test);
     }
@@ -113,7 +113,7 @@ public class SimpleMutationAssertionGenerator extends MutationAssertionGenerator
      * @param killed  a {@link java.util.Set} object.
      * @param mutants a {@link java.util.Map} object.
      */
-    private void addAssertions(TestCase test, Set<Integer> killed,
+    protected void addAssertions(TestCase test, Set<Integer> killed,
                                Map<Integer, Mutation> mutants) {
 
         if (test.isEmpty())
@@ -435,7 +435,7 @@ public class SimpleMutationAssertionGenerator extends MutationAssertionGenerator
      * @param killMap    Mapping of assertion to mutant ids that are killed by the
      *                   assertion
      */
-    private void minimize(TestCase test, List<Mutation> mutants,
+    protected void minimize(TestCase test, List<Mutation> mutants,
                           final List<Assertion> assertions, Map<Integer, Set<Integer>> killMap) {
 
         class Pair implements Comparable<Object> {
