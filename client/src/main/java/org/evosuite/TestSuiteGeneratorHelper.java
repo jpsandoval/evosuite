@@ -276,7 +276,7 @@ public class TestSuiteGeneratorHelper {
         } else if (Properties.ASSERTION_STRATEGY == AssertionStrategy.ALL) {
             asserter = new CompleteAssertionGenerator();
         } else if (Properties.ASSERTION_STRATEGY == AssertionStrategy.JUAMPI) {
-            asserter = new JuampiMutationAssertionGenerator();
+            asserter = new JuampiAssertionGenerator();
         } else
             asserter = new UnitAssertionGenerator();
 

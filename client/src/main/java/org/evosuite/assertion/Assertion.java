@@ -21,6 +21,7 @@ package org.evosuite.assertion;
 
 import org.evosuite.coverage.mutation.Mutation;
 import org.evosuite.testcase.TestCase;
+import org.evosuite.testcase.TestFitnessFunction;
 import org.evosuite.testcase.execution.Scope;
 import org.evosuite.testcase.statements.Statement;
 import org.evosuite.testcase.variable.VariableReference;
@@ -65,6 +66,8 @@ public abstract class Assertion implements Serializable {
     protected String comment;
 
     protected transient Set<Mutation> killedMutants = new LinkedHashSet<>();
+    protected transient Set<TestFitnessFunction> relatedGoalIds = new LinkedHashSet<>();
+
 
     /**
      * Constant <code>logger</code>
@@ -123,6 +126,14 @@ public abstract class Assertion implements Serializable {
 
     public Set<Mutation> getKilledMutations() {
         return killedMutants;
+    }
+
+    public void addRelatedGoal(TestFitnessFunction goal) {
+        relatedGoalIds.add(goal);
+    }
+
+    public Set<TestFitnessFunction> getRelatedGoals() {
+        return relatedGoalIds;
     }
 
     /**
@@ -264,6 +275,7 @@ public abstract class Assertion implements Serializable {
         ois.defaultReadObject();
 
         killedMutants = new LinkedHashSet<>();
+        relatedGoalIds = new LinkedHashSet<>();
     }
 
 }

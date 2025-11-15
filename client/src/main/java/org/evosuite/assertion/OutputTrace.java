@@ -187,6 +187,23 @@ public class OutputTrace<T extends OutputTraceEntry> implements Cloneable {
         return num;
     }
 
+    public int getAllAssertionsWithoutLimit(TestCase test) {
+        int num = 0;
+
+        for (Integer statement : trace.keySet()) {
+            for (Integer var : trace.get(statement).keySet()) {
+                for (Assertion assertion : trace.get(statement).get(var).getAssertions()) {
+                    assert (assertion.isValid()) : "Invalid assertion: "
+                            + assertion.getCode() + ", " + assertion.value;
+                    test.getStatement(statement).addAssertion(assertion);
+                    num++;
+                }
+            }
+        }
+
+        return num;
+    }
+
     /**
      * Get all possible assertions
      *

@@ -858,6 +858,22 @@ public class TestCodeVisitor extends TestVisitor {
             testCode += "\n";
         }
 
+        // related goals
+        Set<TestFitnessFunction> relatedGoals = assertion.getRelatedGoals();
+        if (!relatedGoals.isEmpty()) {
+            testCode += "// R-G: ";
+            boolean first = true;
+            for (TestFitnessFunction goal : relatedGoals) {
+                if (!first) {
+                    testCode += " -;- ";
+                } else {
+                    first = false;
+                }
+                testCode += goal.toString();
+            }
+            testCode += "\n";
+        }
+
         if (assertion instanceof PrimitiveAssertion) {
             visitPrimitiveAssertion((PrimitiveAssertion) assertion);
         } else if (assertion instanceof PrimitiveFieldAssertion) {
