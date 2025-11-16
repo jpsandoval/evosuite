@@ -221,7 +221,7 @@ public class JuampiAssertionGenerator extends SimpleMutationAssertionGenerator{
         }
     }
     private void suiteLevelMinimization(TestSuiteChromosome suite,Set<Integer> tkilled){
-        Map<TestCase, LinkedHashSet<Assertion>> filteredAssertions = filterAssertionByTest(suite);
+        Map<TestCase, LinkedHashSet<Assertion>> filteredAssertions = selectMinimalAssertionByTest(suite);
         for (Map.Entry<TestCase, LinkedHashSet<Assertion>> entry : filteredAssertions.entrySet()) {
             TestCase test = entry.getKey();
             LinkedHashSet<Assertion> result = entry.getValue();
@@ -240,7 +240,7 @@ public class JuampiAssertionGenerator extends SimpleMutationAssertionGenerator{
         }
     }
 
-    public Map<TestCase, LinkedHashSet<Assertion>> filterAssertionByTest(TestSuiteChromosome suite) {
+    public Map<TestCase, LinkedHashSet<Assertion>> selectMinimalAssertionByTest(TestSuiteChromosome suite) {
 
         // Final result: selected assertions per test
         Map<TestCase, LinkedHashSet<Assertion>> finalAssertionsByTest = new LinkedHashMap<>();
