@@ -187,7 +187,7 @@ public class OutputTrace<T extends OutputTraceEntry> implements Cloneable {
         return num;
     }
 
-    
+
 
     /**
      * Get all possible assertions
