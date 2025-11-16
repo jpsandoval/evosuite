@@ -104,6 +104,7 @@ public class JuampiAssertionGenerator extends SimpleMutationAssertionGenerator{
         }
 
         // flag assertions that are related to a OUTPUT coverage goal
+        // are there assertions that are related to other goal rather than mutation and output?
         // these goals can be asserted...
         for(TestFitnessFunction goal: test.getCoveredGoals()){
             if(goal instanceof OutputCoverageTestFitness){
@@ -111,6 +112,7 @@ public class JuampiAssertionGenerator extends SimpleMutationAssertionGenerator{
                 for(Assertion assertion: test.getAssertions()){
                     if(assertion instanceof PrimitiveAssertion && assertion.getStatement() instanceof MethodStatement){
                         MethodStatement methodStatement= (MethodStatement) assertion.getStatement();
+                        // generating one assertion for output goal
                         if(outputGoal.getMethod().equals(methodStatement.getMethodName()+methodStatement.getDescriptor())
                                 && outputGoal.getClassName().equals(methodStatement.getDeclaringClassName())){
                             assertion.addRelatedGoal(outputGoal);
