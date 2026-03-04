@@ -433,7 +433,24 @@ public class TestCodeVisitor extends TestVisitor {
     @Override
     public void visitTestCase(TestCase test) {
         this.test = test;
+
         this.testCode = "";
+
+        Set<TestFitnessFunction> coveredGoals = test.getCoveredGoals();
+        if (!coveredGoals.isEmpty()) {
+            testCode += "/** Covered Goals: \n ";
+            boolean first = true;
+            for (TestFitnessFunction goal : coveredGoals) {
+                if (!first) {
+                    testCode += " -\n  ";
+                } else {
+                    first = false;
+                }
+                testCode +=  ("* "+goal.toString());
+            }
+            testCode += "\n */";
+        }
+
         this.variableNameStrategy = VariableNameStrategyFactory.get();
     }
 
